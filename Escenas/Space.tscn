@@ -1,0 +1,58 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Scripts/Space.gd" type="Script" id=1]
+[ext_resource path="res://Escenas/Enemigo.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Sprites/fondo_estrellas.png" type="Texture" id=3]
+[ext_resource path="res://Escenas/Nave.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Escenas/Interfaz.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Sounds/death.wav" type="AudioStream" id=6]
+[ext_resource path="res://Sounds/Sound_ambiente1.ogg" type="AudioStream" id=7]
+
+[sub_resource type="Curve2D" id=1]
+_data = {
+"points": PoolVector2Array( 0, 0, 0, 0, -0.263107, 0.188751, 0, 0, 0, 0, 419.792, -0.969452, 0, 0, 0, 0, 419.792, 639.342, 0, 0, 0, 0, -0.279282, 639.001, 0, 0, 0, 0, -0.263107, 0.188751 )
+}
+
+[node name="Space" type="Node"]
+script = ExtResource( 1 )
+Enemigo = ExtResource( 2 )
+
+[node name="Fondo" type="TextureRect" parent="."]
+anchor_right = 0.5
+margin_right = 870.0
+margin_bottom = 1920.0
+texture = ExtResource( 3 )
+
+[node name="Nave" parent="." instance=ExtResource( 4 )]
+
+[node name="EnemigoTimer" type="Timer" parent="."]
+wait_time = 0.7
+
+[node name="ScoreTimer" type="Timer" parent="."]
+
+[node name="InicioTimeer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="PositionInicial" type="Position2D" parent="."]
+position = Vector2( 210, 540 )
+
+[node name="Camino" type="Path2D" parent="."]
+curve = SubResource( 1 )
+
+[node name="EnemigoPosition" type="PathFollow2D" parent="Camino"]
+position = Vector2( -0.263107, 0.188751 )
+rotation = -0.00275726
+
+[node name="Interfaz" parent="." instance=ExtResource( 5 )]
+
+[node name="AudioMuerte" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 6 )
+
+[node name="Musica" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 7 )
+[connection signal="golpe" from="Nave" to="." method="gameOver"]
+[connection signal="timeout" from="EnemigoTimer" to="." method="_on_EnemigoTimer_timeout"]
+[connection signal="timeout" from="ScoreTimer" to="." method="_on_ScoreTimer_timeout"]
+[connection signal="timeout" from="InicioTimeer" to="." method="_on_InicioTimeer_timeout"]
+[connection signal="iniciar_juego" from="Interfaz" to="." method="nuevo_juego"]
